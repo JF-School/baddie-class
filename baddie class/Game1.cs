@@ -33,12 +33,13 @@ namespace baddie_class
         Rectangle marioRect;
 
         Random generator;
+        int amt;
 
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = false;
+            IsMouseVisible = true;
         }
 
         protected override void Initialize()
@@ -62,12 +63,14 @@ namespace baddie_class
 
             ghosts = new List<Ghost>();
 
-            for (int i = 1; i <= 20; i++)
+            amt = generator.Next(19, 50); // 20, 51 but big ghost is added after
+            for (int i = 1; i <= amt; i++)
             {
                 int x = generator.Next(window.Width);
                 int y = generator.Next(window.Height);
                 ghosts.Add(new Ghost(ghostTextures, new Rectangle(x, y, 40, 40)));
             }
+            ghosts.Add(new Ghost(ghostTextures, new Rectangle(400, 250, 100, 100)));
             //ghost1 = (new Ghost(ghostTextures, new Rectangle(150, 200, 40, 40)));
         }
 
@@ -96,6 +99,7 @@ namespace baddie_class
             switch (screen)
             {
                 case Screen.Title:
+                    IsMouseVisible = true;
                     if (keyboardState.IsKeyDown(Keys.Enter) && prevKeyboardState.IsKeyUp(Keys.Enter))
                         screen = Screen.House;
                     break;
@@ -103,6 +107,7 @@ namespace baddie_class
                     //ghost1.Update(gameTime, mouseState);
                     //if (ghost1.Contains(mouseState.Position))
                     //    screen = Screen.End;
+                    IsMouseVisible = false;
                     marioRect.X = mouseState.X;
                     marioRect.Y = mouseState.Y;
                     foreach (Ghost ghost in ghosts)
@@ -113,6 +118,7 @@ namespace baddie_class
                     }
                     break;
                 case Screen.End:
+                    IsMouseVisible = true;
                     break;
             }
 
