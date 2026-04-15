@@ -25,11 +25,12 @@ namespace baddie_class
         KeyboardState keyboardState, prevKeyboardState;
 
         List<Texture2D> ghostTextures;
-        Ghost ghost1;
+        //Ghost ghost1;
         List<Ghost> ghosts;
 
         Texture2D titleBack, houseBack, endBack; // backgrounds
         Texture2D marioTexture;
+        Rectangle marioRect;
 
         Random generator;
 
@@ -37,7 +38,7 @@ namespace baddie_class
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = true;
+            IsMouseVisible = false;
         }
 
         protected override void Initialize()
@@ -52,20 +53,22 @@ namespace baddie_class
             ghostTextures = new List<Texture2D>();
             generator = new Random();
 
+            marioRect = new Rectangle(mouseState.X, mouseState.Y, 20, 20);
+
 
             // TODO: Add your initialization logic here
 
             base.Initialize();
 
-            //for (int i = 1; i <= 20; i++)
-            //{
-            //    int x, y;
-            //    x = generator.Next(window.Width);
-            //    y = generator.Next(window.Height);
-            //    Rectangle g = new Rectangle(x, y, 40, 40);
-            //    ghosts.Add(new Ghost(ghostTextures, g));
-            //}
-            ghost1 = (new Ghost(ghostTextures, new Rectangle(150, 200, 40, 40)));
+            ghosts = new List<Ghost>();
+
+            for (int i = 1; i <= 20; i++)
+            {
+                int x = generator.Next(window.Width);
+                int y = generator.Next(window.Height);
+                ghosts.Add(new Ghost(ghostTextures, new Rectangle(x, y, 40, 40)));
+            }
+            //ghost1 = (new Ghost(ghostTextures, new Rectangle(150, 200, 40, 40)));
         }
 
         protected override void LoadContent()
@@ -97,15 +100,17 @@ namespace baddie_class
                         screen = Screen.House;
                     break;
                 case Screen.House:
-                    ghost1.Update(gameTime, mouseState);
-                    if (ghost1.Contains(mouseState.Position))
-                        screen = Screen.End;
-                    //foreach (Ghost ghost in ghosts)
-                    //{
-                    //    ghost.Update(gameTime, mouseState);
-                    //    if (ghost.Contains(mouseState.Position))
-                    //        screen = Screen.End;
-                    //}
+                    //ghost1.Update(gameTime, mouseState);
+                    //if (ghost1.Contains(mouseState.Position))
+                    //    screen = Screen.End;
+                    marioRect.X = mouseState.X;
+                    marioRect.Y = mouseState.Y;
+                    foreach (Ghost ghost in ghosts)
+                    {
+                        ghost.Update(gameTime, mouseState);
+                        if (ghost.Contains(mouseState.Position))
+                            screen = Screen.End;
+                    }
                     break;
                 case Screen.End:
                     break;
@@ -136,9 +141,10 @@ namespace baddie_class
                     break;
                 case Screen.House:
                     _spriteBatch.Draw(houseBack, window, Color.White);
-                    ghost1.Draw(_spriteBatch);
-                    //foreach (Ghost ghost in ghosts)
-                    //    ghost.Draw(_spriteBatch);
+                    _spriteBatch.Draw(marioTexture, marioRect, Color.White);
+                    //ghost1.Draw(_spriteBatch);
+                    foreach (Ghost ghost in ghosts)
+                        ghost.Draw(_spriteBatch);
                     break;
                 case Screen.End:
                     _spriteBatch.Draw(endBack, window, Color.White);

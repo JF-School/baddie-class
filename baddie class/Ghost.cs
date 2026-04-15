@@ -19,6 +19,7 @@ namespace baddie_class
         private int _textureIndex; // allows us to control which texture is drawn
         private float _animationSpeed;
         private float _seconds;
+        private float _opacity;
 
         public Ghost(List<Texture2D> textures, Rectangle location)
         {
@@ -29,6 +30,7 @@ namespace baddie_class
             _direction = SpriteEffects.None;
             _animationSpeed = 0.2f;
             _seconds = 0;
+            _opacity = 1;
         }
 
         public Rectangle Rect
@@ -38,7 +40,7 @@ namespace baddie_class
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_textures[_textureIndex], _location, null, Color.White, 0f, Vector2.Zero, _direction, 1);
+            spriteBatch.Draw(_textures[_textureIndex], _location, null, Color.White * _opacity, 0f, Vector2.Zero, _direction, 1);
         }
 
         public void Update(GameTime gameTime, MouseState mouseState)
@@ -69,9 +71,11 @@ namespace baddie_class
                 _speed = Vector2.Zero;
                 _textureIndex = 0;
                 _seconds = 0f;
+                _opacity = 0.3f;
             }
             else if (_speed != Vector2.Zero)
             {
+                _opacity = 1;
                 _seconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
                 if (_seconds > _animationSpeed)
                 {
